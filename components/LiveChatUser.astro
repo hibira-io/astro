@@ -1,0 +1,21 @@
+---
+// Signs the visitor in to Hibira Live Chat (added by the integration or
+// <LiveChat>): their conversations follow them across browsers and devices,
+// and your team sees who they are. Put it on the page, usually in the layout,
+// only for signed-in users; nothing renders without a `user`.
+//
+//   <LiveChatUser user={{ id: user.id, name: user.name, email: user.email }} />
+//
+// The hash is made here, on the server, with HIBIRA_LIVECHAT_IDENTITY_SECRET
+// (or `secret`) from Live Chat > Settings > Install > Verified visitors.
+import { liveChatUser, scriptJSON } from '../livechat.js';
+
+const penv = typeof process !== 'undefined' && process.env ? process.env : {};
+const { user, secret = import.meta.env.HIBIRA_LIVECHAT_IDENTITY_SECRET || penv.HIBIRA_LIVECHAT_IDENTITY_SECRET } = Astro.props;
+
+if (user && user.id != null && !secret) {
+  console.warn('@hibira-io/astro: <LiveChatUser> needs HIBIRA_LIVECHAT_IDENTITY_SECRET (or secret) to sign the visitor in.');
+}
+const identity = await liveChatUser(user, secret);
+---
+{identity && <script is:inline type="application/json" data-hibira-live-chat-user set:html={scriptJSON(identity)} />}

@@ -1,0 +1,113 @@
+{
+  "name": "@hibira-io/astro",
+  "version": "0.1.0",
+  "description": "Hibira for Astro: add the Live Chat widget to every page with one line in astro.config, sign visitors in from your server, and use realtime channels, presence and LLM token streaming from page scripts, on Hibira or any Pusher-compatible server",
+  "keywords": [
+    "astro-integration",
+    "astro-component",
+    "withastro",
+    "astro",
+    "live-chat",
+    "chat-widget",
+    "customer-support",
+    "pusher",
+    "pusher-js",
+    "websocket",
+    "realtime",
+    "presence",
+    "llm",
+    "ai",
+    "streaming",
+    "hibira"
+  ],
+  "homepage": "https://hibira.io",
+  "bugs": {
+    "url": "https://github.com/hibira-io/astro/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hibira-io/astro.git"
+  },
+  "license": "MIT",
+  "author": "Hibira (https://hibira.io)",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./components": {
+      "types": "./components/index.d.ts",
+      "default": "./components/index.js"
+    },
+    "./realtime": {
+      "types": "./realtime.d.ts",
+      "default": "./realtime.js"
+    },
+    "./server": {
+      "types": "./astro-server.d.ts",
+      "default": "./astro-server.js"
+    },
+    "./livechat": {
+      "types": "./livechat.d.ts",
+      "default": "./livechat.js"
+    },
+    "./core": {
+      "types": "./realtime-core.d.ts",
+      "default": "./realtime-core.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "livechat.js",
+    "livechat.d.ts",
+    "realtime.js",
+    "realtime.d.ts",
+    "realtime-core.js",
+    "realtime-core.d.ts",
+    "astro-server.js",
+    "astro-server.d.ts",
+    "endpoints.js",
+    "endpoints.d.ts",
+    "client.js",
+    "client.d.ts",
+    "stream.js",
+    "stream.d.ts",
+    "agent.js",
+    "agent.d.ts",
+    "server.js",
+    "server.d.ts",
+    "components/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:fixture": "sh test/fixture.sh",
+    "typecheck": "tsc -p test/tsconfig.json"
+  },
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0",
+    "pusher-js": ">=7"
+  },
+  "peerDependenciesMeta": {
+    "pusher-js": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "astro": "^7.4.11",
+    "jsdom": "^27.4.0",
+    "pusher": "^5.3.4",
+    "pusher-js": "^8.6.0",
+    "typescript": "^5.9.3"
+  }
+}

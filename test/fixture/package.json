@@ -1,0 +1,16 @@
+{
+  "name": "hibira-astro-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.12",
+    "@hibira-io/astro": "file:../../hibira-io-astro-0.1.0.tgz",
+    "astro": "^7.4.11",
+    "pusher": "^5.3.4",
+    "pusher-js": "^8.6.0"
+  }
+}

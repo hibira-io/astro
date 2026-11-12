@@ -1,0 +1,71 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["20", "22", "24"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - name: Package contents
+        run: npm pack --dry-run
+
+  # Builds test/fixture (an on-demand Astro site) with each Astro major
+  # against the packed package, then drives it in Chromium: the real Live
+  # Chat widget from chat.hibira.io, signed-in visitors, view transitions,
+  # and realtime events, presence, auth and LLM streams through soketi.
+  astro:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        astro: ["4", "5", "6", "7"]
+    services:
+      soketi:
+        image: quay.io/soketi/soketi:1.6-16-debian
+        ports: ["6001:6001"]
+        env:
+          SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES: "true"
+    env:
+      HIBIRA_APP_ID: app-id
+      PUBLIC_HIBIRA_KEY: app-key
+      HIBIRA_SECRET: app-secret
+      HIBIRA_WS_HOST: 127.0.0.1
+      HIBIRA_WS_PORT: "6001"
+      HIBIRA_WS_TLS: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: test/fixture.sh ${{ matrix.astro }} "$RUNNER_TEMP"
+      - name: Start the site
+        working-directory: ${{ runner.temp }}/fixture
+        run: |
+          HOST=127.0.0.1 PORT=4321 nohup node dist/server/entry.mjs > server.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:4321/about > /dev/null && break; sleep 1; done
+          curl -sf 'http://127.0.0.1:4321/?user=ann' | grep -q 'data-hibira-live-chat-user'
+      - name: Live Chat widget
+        run: curl -sfL https://chat.hibira.io/w/v1.js -o "$RUNNER_TEMP/v1.js" || echo "widget not reachable; checking the loader with a stand-in"
+      - working-directory: ${{ runner.temp }}/fixture
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - working-directory: ${{ runner.temp }}/fixture
+        run: |
+          [ -s "$RUNNER_TEMP/v1.js" ] && export WIDGET_FILE="$RUNNER_TEMP/v1.js"
+          BASE=http://127.0.0.1:4321 node check.mjs
+      - if: failure()
+        run: cat "$RUNNER_TEMP/fixture/server.log"
