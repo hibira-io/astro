@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Home">
+  <h1 id="page">Home</h1>
+  <p>Connection: <strong id="state">initialized</strong></p>
+  <p>Last order: <strong id="order">none</strong></p>
+  <p>In the room: <strong id="room">0</strong></p>
+  <p>Answer: <strong id="answer"></strong></p>
+  <script>
+    import { onConnectionState, onEvent, onPresence, onStream } from '@hibira-io/astro/realtime';
+    const $ = (id) => document.getElementById(id);
+    onConnectionState((s) => { $('state').textContent = s; });
+    onEvent('orders', 'created', (o) => { $('order').textContent = o.id; });
+    onPresence('presence-room', (p) => { $('room').textContent = p.members.map((m) => m.info?.name).join(','); });
+    onStream('ai', (s) => { $('answer').textContent = s.text + (s.done ? ' [done]' : ''); });
+  </script>
+</Base>

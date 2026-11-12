@@ -1,0 +1,20 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { LiveChatUser, LiveChatButton } from '@hibira-io/astro/components';
+const name = Astro.url.searchParams.get('user');
+const user = name ? { id: name, name: name[0].toUpperCase() + name.slice(1), email: `${name}@example.com` } : null;
+const q = name ? `?user=${name}` : '';
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{Astro.props.title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <nav><a id="home" href={`/${q}`}>Home</a> <a id="about" href={`/about${q}`}>About</a> <a id="about-anon" href="/about">About (signed out)</a></nav>
+    <slot />
+    <LiveChatButton id="talk" topic="sales" class="btn">Talk to sales</LiveChatButton>
+    <LiveChatUser user={user} />
+  </body>
+</html>

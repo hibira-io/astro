@@ -1,0 +1,7 @@
+node_modules/
+*.tgz
+.DS_Store
+test/fixture/node_modules/
+test/fixture/dist/
+test/fixture/.astro/
+test/fixture/package-lock.json

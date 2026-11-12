@@ -1,0 +1,26 @@
+---
+// Hibira Live Chat on this page (or, in a layout, on every page that uses
+// it), for sites that don't add it everywhere with the integration.
+//
+//   <LiveChat workspace="ws_…" user={Astro.locals.user} />
+//
+// `user` ({ id, name?, email? }) signs a visitor in; the hash is made here,
+// on the server, with HIBIRA_LIVECHAT_IDENTITY_SECRET (or `secret`).
+import { liveChatAttributes, liveChatLoader, liveChatUser, scriptJSON, LIVECHAT_HOST } from '../livechat.js';
+
+const penv = typeof process !== 'undefined' && process.env ? process.env : {};
+const {
+  workspace = import.meta.env.PUBLIC_HIBIRA_LIVECHAT_WORKSPACE,
+  color,
+  lang,
+  launcher = true,
+  host = import.meta.env.PUBLIC_HIBIRA_LIVECHAT_HOST || LIVECHAT_HOST,
+  user,
+  secret = import.meta.env.HIBIRA_LIVECHAT_IDENTITY_SECRET || penv.HIBIRA_LIVECHAT_IDENTITY_SECRET,
+} = Astro.props;
+
+const loader = liveChatLoader({ attributes: liveChatAttributes({ workspace, color, lang, launcher }), host });
+const identity = await liveChatUser(user, secret);
+---
+{identity && <script is:inline type="application/json" data-hibira-live-chat-user set:html={scriptJSON(identity)} />}
+<script is:inline set:html={loader} />

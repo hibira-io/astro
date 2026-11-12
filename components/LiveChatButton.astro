@@ -1,0 +1,8 @@
+---
+// A button that opens Hibira Live Chat. topic="sales" marks a new
+// conversation as a sales inquiry. Any other attribute goes on the button.
+//
+//   <LiveChatButton class="btn">Talk to us</LiveChatButton>
+const { topic, ...rest } = Astro.props;
+---
+<button type="button" data-hibira-live-chat data-topic={topic === 'sales' ? 'sales' : undefined} {...rest}><slot>Chat with us</slot></button>
